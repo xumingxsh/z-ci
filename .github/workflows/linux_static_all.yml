@@ -360,14 +360,16 @@ jobs:
                 find /usr/lib64 -name \"\$lib*\" \\( -type f -o -type l \\) -exec cp -av --no-dereference {} \"\$DEST\" \\;
               done
             fi
+          
+          "
 
-        - name: 验证FFmpeg配置
-          if: env.ENABLE_FFMPEG == 'ON'
-          run: |
-            echo "检查FFmpeg构建目录..."
-            find 3rdpart/ffmpeg/ -name "config.*" -print
-            find 3rdpart/ffmpeg/ -type f -name "*.log" -print
-            ls -laR 3rdpart/ffmpeg/
+      - name: 验证文件存在
+        if: env.ENABLE_FFMPEG == 'ON'
+        run: |
+          if [ ! -f "3rdpart/ffmpeg/ffbuild/config.log" ]; then
+            echo "##[warning]config.log 文件不存在"
+            exit 0  # 非关键错误，继续工作流
+          fi
 
       - name: 设置环境变量
         run: |
