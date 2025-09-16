@@ -374,11 +374,16 @@ jobs:
         id: upload_ffbuild
         if: env.ENABLE_FFMPEG == 'ON'
         uses: actions/upload-artifact@v4
-        with:
-          name: ${{ github.workflow }}_${{ env.TAG }}_${{ env.DATE }}_ffbuild
-          path: 3rdpart/ffmpeg/ffbuild/config.log
-          if-no-files-found: error
-          retention-days: 90
+        path: |
+          3rdpart/ffmpeg/config.log
+          3rdpart/ffmpeg/ffbuild/config.log
+        if-no-files-found: warn  # 改为警告而非错误
+        retention-days: 90
+        # with:
+          # name: ${{ github.workflow }}_${{ env.TAG }}_${{ env.DATE }}_ffbuild
+          # path: 3rdpart/ffmpeg/ffbuild/config.log
+          # if-no-files-found: error
+          # retention-days: 90
 
       - name: 发布信息
         run: |
