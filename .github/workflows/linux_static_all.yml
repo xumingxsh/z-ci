@@ -380,16 +380,11 @@ jobs:
         id: upload_ffbuild
         if: env.ENABLE_FFMPEG == 'ON'
         uses: actions/upload-artifact@v4
-        path: |
-          3rdpart/ffmpeg/config.log
-          3rdpart/ffmpeg/ffbuild/config.log
-        if-no-files-found: warn  # 改为警告而非错误
-        retention-days: 90
-        # with:
-          # name: ${{ github.workflow }}_${{ env.TAG }}_${{ env.DATE }}_ffbuild
-          # path: 3rdpart/ffmpeg/ffbuild/config.log
-          # if-no-files-found: error
-          # retention-days: 90
+        with:
+          name: ${{ github.workflow }}_${{ env.TAG }}_${{ env.DATE }}_ffbuild
+          path: 3rdpart/ffmpeg/ffbuild/config.log
+          if-no-files-found: error
+          retention-days: 90
 
       - name: 发布信息
         run: |
@@ -413,7 +408,7 @@ jobs:
           tag_name:  ${{ github.workflow }}_${{ env.TAG }}_${{ env.DATE }}_${{ env.DATE2 }}
           commitish: 1ac4a74335be6f1c0c444099d09296dbc548ff57
           prerelease: false
-          owner: xumingxsh
+          owner: ziyuexiachu
           body_path: release.txt
           repo: zlmpro-${{ env.TAG }}
 
