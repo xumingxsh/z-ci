@@ -1,15 +1,6 @@
 name: LinuxStaticAll
+
 on:
-  workflow_dispatch:
-    inputs:
-      branch:
-        description: "分支名称"
-        required: true
-        default: "main"
-      enable_ffmpeg:
-        description: "编译FFmpeg?(ON/OFF)"
-        required: true
-        default: "ON"
   issue_comment:
     types: [ created ]  # 监听 issue 评论创建事件
 
@@ -141,6 +132,16 @@ jobs:
           ref: 0.9.5.0
           path: 3rdpart/usrsctp
 
+      # - name: 下载 svac
+        # if: env.ENABLE_FFMPEG == 'ON'
+        # uses: actions/checkout@v2
+        # with:
+          # repository: xia-chu/fuck_svac
+          # fetch-depth: 1
+          # ref: master
+          # path: 3rdpart/fuck_svac
+          # token: ${{ secrets.ACCESS_TOKEN }}
+
       - name: 下载 ffmpeg
         if: env.ENABLE_FFMPEG == 'ON'
         uses: actions/checkout@v2
@@ -177,6 +178,16 @@ jobs:
           fetch-depth: 1
           ref: master
           path: 3rdpart/libg7221
+
+      # - name: 下载 libg7221c
+        # if: env.ENABLE_FFMPEG == 'ON'
+        # uses: actions/checkout@v2
+        # with:
+          # repository: xia-chu/g7221
+          # fetch-depth: 1
+          # ref: master
+          # path: 3rdpart/g7221c
+          # token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: 下载 libopus
         if: env.ENABLE_FFMPEG == 'ON'
@@ -283,13 +294,13 @@ jobs:
               make install > /dev/null 2>&1
               cd ../../
           
-              cd 3rdpart/fuck_svac
-              mkdir build
-              cd build
-              cmake .. -DCMAKE_BUILD_TYPE=Debug
-              make -j $(nproc)
-              make install > /dev/null 2>&1
-              cd ../../../
+              # cd 3rdpart/fuck_svac
+              # mkdir build
+              # cd build
+              # cmake .. -DCMAKE_BUILD_TYPE=Debug
+              # make -j $(nproc)
+              # make install > /dev/null 2>&1
+              # cd ../../../
           
               # cd 3rdpart/libg7221
               # ./autogen.sh  
@@ -302,8 +313,9 @@ jobs:
               # --enable-g722_1
               PKG_CONFIG_PATH=/root/install/lib/pkgconfig ./configure --enable-libopus --enable-g722_1c --enable-gpl --enable-version3 --enable-nonfree --enable-libx264 --enable-libx265 --enable-openssl --enable-svac --prefix=/root/install \
               --enable-libfreetype --enable-libfontconfig --enable-libfribidi --enable-libharfbuzz \
-              --extra-cflags='-I/root/install/include -I/root/3rdpart/fuck_svac/sdk -fPIC' \
-              --extra-ldflags='-L/root/3rdpart/fuck_svac/sdk -L/root/install/lib -lstdc++ -lm -ldl -pthread'
+              --extra-cflags='-I/root/install/include -fPIC' \
+              --extra-ldflags='-L/root/install/lib -lstdc++ -lm -ldl -pthread'
+              # --extra-ldflags='-L/root/3rdpart/fuck_svac/sdk -L/root/install/lib -lstdc++ -lm -ldl -pthread'
           
               make -j $(nproc) > /dev/null 2>&1
               make install > /dev/null 2>&1
@@ -337,15 +349,16 @@ jobs:
             -DDISABLE_REPORT=ON \
             -DENABLE_SVAC=OFF \
             -DENABLE_G722_1=OFF \
-            -DCMAKE_CXX_FLAGS='-L/root/3rdpart/fuck_svac/sdk -ldl'
+            -ldl'
+            # -DCMAKE_CXX_FLAGS='-L/root/3rdpart/fuck_svac/sdk -ldl'
           
             make -j $(nproc)
           
             cd ..
             rm -rf release/linux/Release/*.a
             if [ "$ENABLE_FFMPEG" = "ON" ]; then
-              rm -rf /root/3rdpart/fuck_svac/sdk/*.h
-              rm -rf /root/3rdpart/fuck_svac/sdk/*.a
+              # rm -rf /root/3rdpart/fuck_svac/sdk/*.h
+              # rm -rf /root/3rdpart/fuck_svac/sdk/*.a
               rm -rf /root/install/lib/*.a
             
               mkdir -p release/linux/Release/lib
@@ -362,14 +375,6 @@ jobs:
             fi
           
           "
-
-      - name: 验证文件存在
-        if: env.ENABLE_FFMPEG == 'ON'
-        run: |
-          if [ ! -f "3rdpart/ffmpeg/ffbuild/config.log" ]; then
-            echo "##[warning]config.log 文件不存在"
-            exit 0  # 非关键错误，继续工作流
-          fi
 
       - name: 设置环境变量
         run: |
@@ -410,7 +415,7 @@ jobs:
           tag_name:  ${{ github.workflow }}_${{ env.TAG }}_${{ env.DATE }}_${{ env.DATE2 }}
           commitish: 1ac4a74335be6f1c0c444099d09296dbc548ff57
           prerelease: false
-          owner: ziyuexiachu
+          owner: xumingxsh
           body_path: release.txt
           repo: zlmpro-${{ env.TAG }}
 
