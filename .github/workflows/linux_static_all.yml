@@ -360,8 +360,7 @@ jobs:
                 find /usr/lib64 -name \"\$lib*\" \\( -type f -o -type l \\) -exec cp -av --no-dereference {} \"\$DEST\" \\;
               done
             fi
-          
-          "
+
         - name: 验证FFmpeg配置
           if: env.ENABLE_FFMPEG == 'ON'
           run: |
