@@ -402,7 +402,7 @@ jobs:
           tag_name:  ${{ github.workflow }}_${{ env.TAG }}_${{ env.DATE }}_${{ env.DATE2 }}
           commitish: 1ac4a74335be6f1c0c444099d09296dbc548ff57
           prerelease: false
-          owner: ziyuexiachu
+          owner: xumingxsh
           body_path: release.txt
           repo: zlmpro-${{ env.TAG }}
 
